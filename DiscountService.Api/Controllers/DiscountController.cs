@@ -52,12 +52,12 @@ namespace DiscountService.Api.Controllers
             }
         }
 
-        [HttpPost("getCoupon")]
-        public async Task<IActionResult> GetCoupon(GetCouponRequestModel model)
+        [HttpGet("getCoupon")]
+        public async Task<IActionResult> GetCoupon([FromQuery]GetCouponRequestModel model)
         {
             if (ModelState.IsValid)
             {
-                var couponId = model.CouponId.IsNotNullOrEmpty() 
+                var couponId = model.CouponId.IsNotNullOrEmpty()
                     ? new CouponId(model.CouponId) : null;
 
                 var couponResult = await _queryProcessor
