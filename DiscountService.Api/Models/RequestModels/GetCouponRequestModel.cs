@@ -8,7 +8,7 @@ namespace DiscountService.Api.Models.RequestModels
 {
     public class GetCouponRequestModel
     {
-        public string CouponId { get; set; }
+        public CouponId CouponId { get; set; }
 
         public string UserId { get; set; }
     }

@@ -57,12 +57,9 @@ namespace DiscountService.Api.Controllers
         {
             if (ModelState.IsValid)
             {
-                var couponId = model.CouponId.IsNotNullOrEmpty()
-                    ? new CouponId(model.CouponId) : null;
-
                 var couponResult = await _queryProcessor
                     .ProcessAsync(
-                        new GetCouponQuery(couponId, model.UserId),
+                        new GetCouponQuery(model.CouponId, model.UserId),
                         CancellationToken.None);
 
                 return Ok(couponResult);

@@ -39,15 +39,15 @@ namespace DiscountService.Api
 
             var host = CreateHostBuilder(args).Build();
 
-            //using (var scope = host.Services.CreateScope())
-            //{
-            //    _aggregateStore = scope.ServiceProvider.GetRequiredService<IAggregateStore>();
+            using (var scope = host.Services.CreateScope())
+            {
+                _aggregateStore = scope.ServiceProvider.GetRequiredService<IAggregateStore>();
 
-            //    var db = scope.ServiceProvider.GetRequiredService<IDbContextProvider<DiscountContext>>();
-            //    db.CreateContext().Database.Migrate();
+                var db = scope.ServiceProvider.GetRequiredService<IDbContextProvider<DiscountContext>>();
+                db.CreateContext().Database.Migrate();
 
-            //    await Task.WhenAll(Coupons.GetCoupons().Select(AddCouponsAsync));
-            //}
+                await Task.WhenAll(Coupons.GetCoupons().Select(AddCouponsAsync));
+            }
 
             host.Run();
         }
