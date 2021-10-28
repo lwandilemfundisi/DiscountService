@@ -23,8 +23,6 @@ namespace DiscountService.Api
 {
     public class Program
     {
-        private static IAggregateStore _aggregateStore;
-
         public static async Task Main(string[] args)
         {
             Log.Logger = new LoggerConfiguration()
@@ -41,12 +39,8 @@ namespace DiscountService.Api
 
             using (var scope = host.Services.CreateScope())
             {
-                _aggregateStore = scope.ServiceProvider.GetRequiredService<IAggregateStore>();
-
                 var db = scope.ServiceProvider.GetRequiredService<IDbContextProvider<DiscountContext>>();
                 db.CreateContext().Database.Migrate();
-
-                await Task.WhenAll(Coupons.GetCoupons().Select(AddCouponsAsync));
             }
 
             host.Run();
@@ -58,46 +52,5 @@ namespace DiscountService.Api
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-
-        private async static Task UpdateAsync<TAggregate, TIdentity>(TIdentity id, Action<TAggregate> action)
-            where TAggregate : class, IAggregateRoot<TIdentity>
-            where TIdentity : IIdentity
-        {
-            await _aggregateStore.UpdateAsync<TAggregate, TIdentity>(
-                id,
-                SourceId.New,
-                (a, c) =>
-                {
-                    action(a);
-                    return Task.FromResult(0);
-                },
-                CancellationToken.None);
-        }
-
-        public static Task AddCouponsAsync(Coupon coupon)
-        {
-            return UpdateAsync<Coupon, CouponId>(coupon.Id, a => a.AddCoupon(coupon.UserId, coupon.DiscountAmount));
-        }
-    }
-
-    public static class Coupons
-    {
-        public static readonly Coupon Coupon1 = new Coupon(CouponId.New) 
-        {
-            UserId = Guid.NewGuid().ToString(),
-            DiscountAmount = 67
-        };
-
-        public static readonly Coupon Coupon2 = new Coupon(CouponId.New)
-        {
-            UserId = Guid.NewGuid().ToString(),
-            DiscountAmount = 96
-        };
-
-        public static IEnumerable<Coupon> GetCoupons()
-        {
-            var fieldInfos = typeof(Coupons).GetFields(BindingFlags.Public | BindingFlags.Static);
-            return fieldInfos.Select(fi => (Coupon)fi.GetValue(null));
-        }
     }
 }
