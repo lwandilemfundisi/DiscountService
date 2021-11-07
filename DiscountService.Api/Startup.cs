@@ -33,8 +33,8 @@ namespace DiscountService.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddSingleton(_ => Configuration);
             services.AddLogging(l => l.AddConsole());
-
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "DiscountService.Api", Version = "v1" });
@@ -45,7 +45,7 @@ namespace DiscountService.Api
                 .AddNewtonsoftJson();
             services
                 .ConfigureDiscountServiceDomain()
-                .ConfigureDiscountPersistence(Configuration);
+                .ConfigureDiscountPersistence();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

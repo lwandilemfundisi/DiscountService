@@ -16,8 +16,7 @@ namespace DiscountService.Persistence.Extensions
     public static class EntityFrameworkExtensions
     {
         public static IDomainContainer ConfigureDiscountPersistence(
-            this IDomainContainer domainContainer,
-            IConfiguration configuration)
+            this IDomainContainer domainContainer)
         {
             return domainContainer
                 .ConfigureEntityFramework(EntityFrameworkConfiguration.New)
@@ -25,7 +24,6 @@ namespace DiscountService.Persistence.Extensions
                 .RegisterServices(sr =>
                 {
                     sr.AddTransient<IPersistenceFactory, EntityFrameworkPersistenceFactory<DiscountContext>>();
-                    sr.AddSingleton(rctx => { return configuration; });
                 });
         }
         
